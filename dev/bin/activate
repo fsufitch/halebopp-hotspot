@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
-DEV_BASE=$(cd "$(dirname "${BASH_SOURCE[0]})")/.." && pwd)
 
-echo >&2 "Activating dev dir: $DEV_BASE"
+_REPO=$(git rev-parse --show-toplevel)
+_REPONAME=$(basename "$_REPO")
 
-PATH="$DEV_BASE/bin:$PATH"
-GOPATH="$DEV_BASE/go"
+export GOPATH="$_REPO/dev/go"
+export PATH="$_REPO/dev/bin:$_REPO/dev/go/bin:$PATH"
 
-PS1="($(basename "$(cd "$DEV_BASE/.." && pwd)")) $PS1"
+_DOTENV="$_REPO/.env"
+if [[ -f "$_DOTENV" ]]; then
+    echo >&2 "Including dotenv: $_DOTENV"
+    source "$_DOTENV"
+fi
+
+export PS1="($_REPONAME) $PS1"
