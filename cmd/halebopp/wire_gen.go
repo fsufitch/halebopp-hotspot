@@ -8,24 +8,28 @@ package main
 
 import (
 	"github.com/fsufitch/halebopp-hotspot"
-	"github.com/fsufitch/halebopp-hotspot/modules"
+	"github.com/fsufitch/halebopp-hotspot/impl/x278"
 )
 
 // Injectors from wire.go:
 
 func initializeDefaultHaleBopp() (*halebopp.HaleBopp, func(), error) {
-	battery, cleanup, err := modules.ProvideX278Battery()
+	i2CBus, cleanup, err := x278.NewI2CBus()
 	if err != nil {
 		return nil, nil, err
 	}
-	charging, err := modules.ProvideX278Charging()
+	gpio, err := x278.NewGPIO()
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
+	x278X278 := x278.X278{
+		I2CBus: i2CBus,
+		GPIO:   gpio,
+	}
+	battery := x278.ProvideBattery(x278X278)
 	haleBopp := &halebopp.HaleBopp{
-		Battery:  battery,
-		Charging: charging,
+		Battery: battery,
 	}
 	return haleBopp, func() {
 		cleanup()

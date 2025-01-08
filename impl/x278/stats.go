@@ -1,4 +1,4 @@
-package modules
+package x278
 
 import (
 	"bytes"
@@ -10,15 +10,9 @@ import (
 	"periph.io/x/host/v3"
 )
 
-type Battery interface {
-	Stats() (voltage float64, level float64, err error)
+type I2CBus struct {
+	i2c.BusCloser
 }
-
-type X278Battery struct {
-	bus i2c.BusCloser
-}
-
-var _ Battery = &X278Battery{}
 
 const (
 	x278_Addr          uint16 = 0x36
@@ -26,28 +20,30 @@ const (
 	x278_LevelOffset   uint16 = 4
 )
 
-func ProvideX278Battery() (Battery, func(), error) {
-	_, err := host.Init()
+func NewI2CBus() (bus I2CBus, cleanup func(), err error) {
+	_, err = host.Init()
 	if err != nil {
-		return nil, func() {}, fmt.Errorf("driver init: %w", err)
+		err = fmt.Errorf("driver init: %w", err)
+		return
 	}
 
-	bus, err := i2creg.Open("")
+	bus.BusCloser, err = i2creg.Open("")
 	if err != nil {
-		return nil, func() {}, fmt.Errorf("bus open: %w", err)
+		err = fmt.Errorf("bus open: %w", err)
+		return
 	}
 
-	cleanup := func() {
+	cleanup = func() {
 		bus.Close()
 	}
 
-	return &X278Battery{bus: bus}, cleanup, nil
+	return
 }
 
-func (x278 *X278Battery) Stats() (voltage float64, level float64, err error) {
+func (bus I2CBus) Stats() (voltage float64, level float64, err error) {
 	i2cData := make([]byte, 8)
 
-	err = x278.bus.Tx(x278_Addr, []byte{0}, i2cData)
+	err = bus.Tx(x278_Addr, []byte{0}, i2cData)
 	if err != nil {
 		return
 	}

@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/fsufitch/halebopp-hotspot/modules"
+	"github.com/fsufitch/halebopp-hotspot"
 )
 
 func main() {
@@ -36,14 +36,14 @@ loop:
 			fmt.Printf("battery error: %v\n", err)
 		}
 
-		charging, err := hb.Charging.State()
+		charging, err := hb.ChargeState()
 		if err != nil {
 			fmt.Printf("charging error: %v\n", err)
 		}
 
 		fmt.Printf("Voltage: %f\n", voltage)
 		fmt.Printf("Battery: %f\n", level)
-		fmt.Printf("Charging: %v\n", charging == modules.ChargeState_Charging)
+		fmt.Printf("Charging: %v\n", charging == halebopp.ChargeState_Charging)
 	}
 
 	cleanup()
