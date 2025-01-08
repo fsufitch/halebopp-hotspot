@@ -24,6 +24,12 @@ build-testing: bin/testing/halebopp
 clean:
 	rm -rf bin
 
+.PHONY: upload
+upload:
+	if [[ ! -f "${EXECUTABLE}" ]]; then echo "not found: ${EXECUTABLE}" && exit 1; fi
+	if [[ -z "$$HALEBOPP_REMOTE" ]]; then echo "HALEBOPP_REMOTE not set" && exit 1; fi
+	set -ex && scp bin/halebopp $${HALEBOPP_SSH_KEY:+-i "$$HALEBOPP_SSH_KEY"} "$$HALEBOPP_REMOTE:$${HALEBOPP_UPLOAD_DIR:-.}/"
+
 ########## Executable targets
 
 ${EXECUTABLE}: generate ${GO_SOURCES}
