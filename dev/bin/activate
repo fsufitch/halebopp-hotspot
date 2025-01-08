@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+DEV_BASE=$(cd "$(dirname "${BASH_SOURCE[0]})")/.." && pwd)
+
+echo >&2 "Activating dev dir: $DEV_BASE"
+
+PATH="$DEV_BASE/bin:$PATH"
+GOPATH="$DEV_BASE/go"
+
+PS1="($(basename "$(cd "$DEV_BASE/.." && pwd)")) $PS1"
