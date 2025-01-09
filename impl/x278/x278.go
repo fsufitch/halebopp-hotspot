@@ -10,13 +10,9 @@ type X278 struct {
 	GPIO
 }
 
-func ProvideBattery(x278 X278) halebopp.Battery {
-	return x278
-}
-
 var ProvideX278 = wire.NewSet(
-	wire.Struct(new(X278), "*"),
-	ProvideBattery,
 	NewI2CBus,
 	NewGPIO,
+	wire.Struct(new(X278), "*"),
+	wire.Bind(new(halebopp.Battery), new(X278)),
 )

@@ -12,3 +12,7 @@ type Battery interface {
 	Stats() (voltage float64, level float64, err error)
 	ChargeState() (ChargeState, error)
 }
+
+type Modem interface {
+	SignalLevel() (int, error)
+}

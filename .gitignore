@@ -18,6 +18,9 @@ bin/
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+# Wire-generated source files
+*_gen.go
+
 # Go workspace file
 go.work
 go.work.sum

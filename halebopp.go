@@ -6,6 +6,7 @@ import (
 
 type HaleBopp struct {
 	Battery
+	Modem
 }
 
 var ProvideHaleBopp = wire.Struct(new(HaleBopp), "*")
